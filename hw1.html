@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<style>
+		body {
+		  background-image: url(background.jpg);
+		  background-repeat: no-repeat;
+		  /*background-size:cover */
+		}
+
+		#info {
+		  position: fixed;
+		  top: 2%;
+		  width: 100%;
+		  padding: 10px;
+		  text-align: center;
+		  color: #ffff00
+		}
+  	</style>
+	
+    
+
+</head>
+
+<body>
+	<div id="info">hw01
+	  <br>
+	  <button id="switch" style="width:20%">Click</button>
+	  <br> 燈不會隨視窗縮放
+	</div>
+
+	<audio src="Jingle_Bells_7.mp3" autoplay loop> 
+	</audio>
+
+
+	<div id="1" style="top:200px;left:630px;position:relative;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="2" style="top:230px;left:600px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="3" style="top:240px;left:640px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="4" style="top:280px;left:565px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="5" style="top:270px;left:610px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="6" style="top:290px;left:650px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="7" style="top:270px;left:680px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="8" style="top:320px;left:555px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="9" style="top:310px;left:620px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="10" style="top:350px;left:640px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="11" style="top:330px;left:690px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="12" style="top:345px;left:590px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="13" style="top:380px;left:540px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="14" style="top:400px;left:620px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="15" style="top:380px;left:710px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="16" style="top:420px;left:575px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="17" style="top:420px;left:670px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="18" style="top:450px;left:540px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="19" style="top:450px;left:640px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="20" style="top:440px;left:710px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="21" style="top:500px;left:500px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="22" style="top:500px;left:560px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="23" style="top:470px;left:590px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="24" style="top:470px;left:690px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="25" style="top:500px;left:640px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+	<div id="26" style="top:500px;left:740px;position:fixed;width:10px;height:10px;border-radius:50%;">
+	</div>
+
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+
+<script>
+$("#switch").click(function() {
+  open = !open;
+});
+
+
+function Lamp(lampId) {
+  var name = '#' + lampId;
+  var status = 1;
+
+  var toggle = function() {
+    if (open) {
+      if (status == 1) {
+        $(name).css('backgroundColor', 'hsl(0, 100%, 50%)');
+        status++;
+        // $(name).text (name + ' is on');
+      } else if (status == 2) {
+        $(name).css('backgroundColor', 'hsl(210, 100%, 60%)');
+        status++;
+        //$(name).text (name + ' is off');
+      } else if (status == 3) {
+        $(name).css('backgroundColor', 'hsl(40, 100%, 70%)');
+        status = 1;
+        //$(name).text (name + ' is off');
+      }
+    } else {
+      $(name).css('backgroundColor', 'hsl(0, 0%, 60%)');
+    }
+  };
+
+
+
+  var toggle2 = function() {
+    if (open) {
+      if (status == 1) {
+        $(name).css('backgroundColor', 'hsl(60, 100%, 50%)');
+        status++;
+        // $(name).text (name + ' is on');
+      } else if (status == 2) {
+        $(name).css('backgroundColor', 'hsl(315, 100%, 40%)');
+        status++;
+        //$(name).text (name + ' is off');
+      } else if (status == 3) {
+        $(name).css('backgroundColor', 'hsl(168, 100%, 50%)');
+        status = 1;
+        //$(name).text (name + ' is off');
+      }
+    } else {
+      $(name).css('backgroundColor', 'hsl(0, 0%, 60%)');
+    }
+
+  };
+
+  var toggle3 = function() {
+    if (open) {
+      if (status == 1) {
+        $(name).css('backgroundColor', 'hsl(288, 100%, 50%)');
+        status++;
+        // $(name).text (name + ' is on');
+      } else if (status == 2) {
+        $(name).css('backgroundColor', 'hsl(0, 0%, 100%)');
+        status++;
+        //$(name).text (name + ' is off');
+      } else if (status == 3) {
+        $(name).css('backgroundColor', 'hsl(30, 100%, 60%)');
+        status = 1;
+        //$(name).text (name + ' is off');
+      }
+    } else {
+      $(name).css('backgroundColor', 'hsl(0, 0%, 60%)');
+    }
+
+  };
+
+  this.toggleBlink = function() {
+    setInterval(function() {
+      toggle();
+    }, 500);
+  }
+
+  this.toggleBlink2 = function() {
+    setInterval(function() {
+      toggle2();
+    }, 300);
+  }
+
+
+
+  this.toggleBlink3 = function() {
+    setInterval(function() {
+      toggle3();
+    }, 300);
+  }
+
+}
+
+
+
+l0 = new Lamp('1');
+l0.toggleBlink();
+l1 = new Lamp('2');
+l1.toggleBlink2();
+l2 = new Lamp('3');
+l2.toggleBlink3();
+l3 = new Lamp('4');
+l3.toggleBlink();
+l4 = new Lamp('5');
+l4.toggleBlink2();
+l5 = new Lamp('6');
+l5.toggleBlink3();
+l6 = new Lamp('7');
+l6.toggleBlink();
+l7 = new Lamp('8');
+l7.toggleBlink2();
+l8 = new Lamp('9');
+l8.toggleBlink3();
+l9 = new Lamp('10');
+l9.toggleBlink();
+l10 = new Lamp('11');
+l10.toggleBlink2();
+l11 = new Lamp('12');
+l11.toggleBlink3();
+l12 = new Lamp('13');
+l12.toggleBlink();
+l13 = new Lamp('14');
+l13.toggleBlink2();
+l14 = new Lamp('15');
+l14.toggleBlink3();
+l15 = new Lamp('16');
+l15.toggleBlink();
+l16 = new Lamp('17');
+l16.toggleBlink2();
+l17 = new Lamp('18');
+l17.toggleBlink3();
+l18 = new Lamp('19');
+l18.toggleBlink();
+l19 = new Lamp('20');
+l19.toggleBlink2();
+l20 = new Lamp('21');
+l20.toggleBlink3();
+l21 = new Lamp('22');
+l21.toggleBlink();
+l22 = new Lamp('23');
+l22.toggleBlink2();
+l23 = new Lamp('24');
+l23.toggleBlink3();
+l24 = new Lamp('25');
+l24.toggleBlink();
+l25 = new Lamp('26');
+l25.toggleBlink2();
+
+
+
+
+
+</script>
+
+</body>
+</html>
+
