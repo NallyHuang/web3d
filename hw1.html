@@ -1,0 +1,185 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Untitled Document</title>
+</head>
+<style>
+		body {
+		  background-color:#8c3636
+		}
+
+		#info {
+		  position: fixed;
+		  top: 2%;
+		  width: 100%;
+		  padding: 10px;
+		  text-align: center;
+		  color: #ffff00
+		}
+  	</style>
+	
+    
+<body>
+	<div id="info">hw01
+	  <br>
+	  <button id="switch" style="width:10%">light</button>
+	</div>
+	<audio src="Jingle_Bells_7.mp3" autoplay loop> 
+	</audio>
+
+
+ 
+<div>
+  <img src="tree.png" style="position:absolute;top:15vw;left:40vw;width:25vw;z-index:-1">
+<img src="milu1.png" style="position:absolute;top:30vw;left:16vw;width:20vw;z-index:-1">
+<img src="gifts.png" style="position:absolute;top:37vw;left:68vw;width:20vw;z-index:-1">   
+
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+</div>
+	<script>
+var off;
+$("#switch").click(function() {
+  off = !off;
+  
+});
+
+
+class Light {
+  constructor() {
+    this.element = document.createElement('div');
+    this.element.id = 'light';
+    this.element.style.cssText = "position:absolute;width:10px;height:10px;border-radius:15px;z-index:1";
+
+    this.element.style.background = "hslhsl(0, 0%, 60%)";
+    document.getElementsByTagName('body')[0].appendChild(this.element);
+  }
+
+
+  changeColor() {
+	
+    var self = this;
+    var hue = Math.random() * 200; 
+	if(off){
+    self.element.style.background = "hsl(" + hue + ", 43%, 50%)";
+	}
+	else {
+		self.element.style.background = "hsl(0, 0%, 60%)";
+	}
+	  
+    setTimeout(function() {
+      self.changeColor()}, 500);
+  }
+
+}
+
+init();
+
+function init() {
+  var light = new Light();
+  var light2 = new Light();
+  var light3 = new Light();
+  var light4 = new Light();
+  var light5 = new Light();
+  var light6 = new Light();
+  var light7 = new Light();
+  var light8 = new Light();
+  var light9 = new Light();
+  var light10 = new Light();
+  var light11 = new Light();
+  var light12 = new Light();
+  var light13 = new Light();
+  var light14 = new Light();
+  var light15 = new Light();
+  var light16 = new Light();
+  var light17 = new Light();
+  var light18 = new Light();
+  var light19 = new Light();
+  var light20 = new Light();
+  var light21 = new Light();
+  var light22 = new Light();
+  var light23 = new Light();
+  var light24 = new Light();
+  var light25 = new Light();
+ 
+  light.changeColor();
+  light.element.style.top = '21vw';
+  light.element.style.left = '51vw';
+  light2.changeColor();
+  light2.element.style.top = '24vw';
+  light2.element.style.left = '53vw';
+  light3.changeColor();
+  light3.element.style.top = '25vw';
+  light3.element.style.left = '48vw';
+  light4.changeColor();
+  light4.element.style.top = '27vw';
+  light4.element.style.left = '50.5vw';
+  light5.changeColor();
+  light5.element.style.top = '26.5vw';
+  light5.element.style.left = '56vw';
+  light6.changeColor();
+  light6.element.style.top = '29vw';
+  light6.element.style.left = '47.5vw';
+  light7.changeColor();
+  light7.element.style.top = '29vw';
+  light7.element.style.left = '53.5vw';
+  light8.changeColor();
+  light8.element.style.top = '32vw';
+  light8.element.style.left = '45.5vw';
+  light9.changeColor();
+  light9.element.style.top = '31.5vw';
+  light9.element.style.left = '49vw';
+  light10.changeColor();
+  light10.element.style.top = '32vw';
+  light10.element.style.left = '53vw';
+  light11.changeColor();
+  light11.element.style.top = '31vw';
+  light11.element.style.left = '57vw';
+  light12.changeColor();
+  light12.element.style.top = '35vw';
+  light12.element.style.left = '44.5vw';
+  light13.changeColor();
+  light13.element.style.top = '35vw';
+  light13.element.style.left = '50vw';
+  light14.changeColor();
+  light14.element.style.top = '34.8vw';
+  light14.element.style.left = '55vw';
+  light15.changeColor();
+  light15.element.style.top = '35vw';
+  light15.element.style.left = '59vw';
+  light16.changeColor();
+  light16.element.style.top = '39vw';
+  light16.element.style.left = '43vw';
+  light17.changeColor();
+  light17.element.style.top = '39vw';
+  light17.element.style.left = '47vw';
+  light18.changeColor();
+  light18.element.style.top = '39vw';
+  light18.element.style.left = '52vw';
+  light19.changeColor();
+  light19.element.style.top = '38vw';
+  light19.element.style.left = '57vw';
+  light20.changeColor();
+  light20.element.style.top = '40vw';
+  light20.element.style.left = '60.5vw';
+  light21.changeColor();
+  light21.element.style.top = '43vw';
+  light21.element.style.left = '43vw';
+  light22.changeColor();
+  light22.element.style.top = '41vw';
+  light22.element.style.left = '48vw';
+  light23.changeColor();
+  light23.element.style.top = '44vw';
+  light23.element.style.left = '50vw';
+  light24.changeColor();
+  light24.element.style.top = '42vw';
+  light24.element.style.left = '55vw';
+  light25.changeColor();
+  light25.element.style.top = '44vw';
+  light25.element.style.left = '59vw';
+}
+
+
+	</script>
+</body>
+</html>
