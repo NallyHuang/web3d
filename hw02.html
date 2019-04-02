@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+<style>
+		#info {
+		  position: fixed;
+		  top: 2%;
+		  width: 100%;
+		  padding: 10px;
+		  text-align: center;
+		  color: #ffff00
+		}
+
+
+
+
+</style>
+<head>
+</head>
+
+<body>
+	<div id="info"> hw02
+  <br>
+  <button id="tView" style="width:10%">Light</button>
+  
+<input type=range min=0 max=1 step=0.1 id='intensity'> intensity <br>
+<button id = "toggle" style="width:10%">camera</button> <br>
+
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js">
+
+
+</script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+
+<script>
+
+
+
+
+//var useCamera1 = false;
+var lightsOff = false;
+var spotlightsOff = false;
+
+$('#intensity').change ( function() {
+	console.log ( $(this).val() );
+  	light.intensity = $(this).val();
+	light2.intensity = $(this).val();
+	light3.intensity = $(this).val();
+	light4.intensity = $(this).val();
+
+})
+
+$('#tView').click(function() {
+
+	lightsOff = !lightsOff;
+  
+  if (lightsOff) {
+  	light.intensity = 0;
+    light2.intensity = 0;
+	light3.intensity = 0;
+	light4.intensity = 0;
+	
+
+  } else {
+  	light.intensity = .5;
+    light2.intensity = .5;  
+	light3.intensity = .5;
+	light4.intensity = .5;
+
+  }
+});
+
+
+
+
+
+function wall(){
+	let wall = new THREE.Mesh(new THREE.BoxGeometry(300, 100, 10), new THREE.MeshPhongMaterial({color: "hsl(35, 5%, 80%)"}));
+  scene.add(wall);
+  wall.position.set(65, 50, 145);
+  let wall2 = new THREE.Mesh(new THREE.BoxGeometry(60, 100, 10), new THREE.MeshPhongMaterial({color: "hsl(35, 5%, 80%)"}));
+  scene.add(wall2);
+  wall2.position.set(-175, 50, 145);
+  let wall3 = new THREE.Mesh(new THREE.BoxGeometry(10, 100, 300), new THREE.MeshPhongMaterial({color: "hsl(35, 5%, 80%)"}));
+  scene.add(wall3);
+  wall3.position.set(-210, 50, 0);
+  let wall4 = new THREE.Mesh(new THREE.BoxGeometry(430, 100, 10), new THREE.MeshPhongMaterial({color: "hsl(35, 5%, 80%)"}));
+  scene.add(wall4);
+  wall4.position.set(5, 50, -145);
+  let wall5 = new THREE.Mesh(new THREE.BoxGeometry(10, 100, 210), new THREE.MeshPhongMaterial({color: "hsl(35, 5%, 80%)"}));
+  scene.add(wall5);
+  wall5.position.set(220, 50, 45);
+
+}
+function compartment(){
+	let par = new THREE.Mesh(new THREE.BoxGeometry(5, 100, 100), new THREE.MeshPhongMaterial({color: "hsl(35, 5%, 80%)"}));
+  scene.add(par);
+  par.position.set(-5, 50, 95);
+  let par2 = new THREE.Mesh(new THREE.BoxGeometry(5, 100, 100), new THREE.MeshPhongMaterial({color: "hsl(35, 5%, 80%)"}));
+  scene.add(par2);
+  par2.position.set(-5, 50, -90);
+  let par3 = new THREE.Mesh(new THREE.BoxGeometry(5, 100, 100), new THREE.MeshPhongMaterial({color: "hsl(35, 5%, 80%)"}));
+  scene.add(par3);
+  par3.position.set(-55, 50, 10);
+  let par4 = new THREE.Mesh(new THREE.BoxGeometry(55, 100, 5), new THREE.MeshPhongMaterial({color: "hsl(35, 5%, 80%)"}));
+  scene.add(par4);
+  par4.position.set(-30, 50, -40);
+	let par5 = new THREE.Mesh(new THREE.BoxGeometry(3, 80, 150), new THREE.MeshPhongMaterial({color: "hsl(35, 5%, 80%)"}));
+  scene.add(par5);
+  par5.position.set(55, 40, -15);
+  let par6 = new THREE.Mesh(new THREE.BoxGeometry(80, 80, 3), new THREE.MeshPhongMaterial({color: "hsl(220, 60%, 45%)"}));
+  scene.add(par6);
+  par6.position.set(115, 40, 65);
+  let par7 = new THREE.Mesh(new THREE.BoxGeometry(3, 80, 30), new THREE.MeshPhongMaterial({color: "hsl(220, 60%, 45%)"}));
+  scene.add(par7);
+  par7.position.set(155, 40, 50);
+}
+	
+function chair(){
+	let box = new THREE.Mesh(new THREE.BoxGeometry(20, 20, 3), new THREE.MeshPhongMaterial({color: "hsl(220, 60%, 45%)"}));
+  	scene.add(box);
+  	box.position.set(-125, 10, 25);
+	let box2 = new THREE.Mesh(new THREE.BoxGeometry(20, 20, 3), new THREE.MeshPhongMaterial({color: "hsl(220, 60%, 45%)"}));
+  	scene.add(box2);
+  	box2.position.set(-125, 10, -25);
+	let box3 = new THREE.Mesh(new THREE.BoxGeometry(20, 56, 3), new THREE.MeshPhongMaterial({color: "hsl(220, 60%, 45%)"}));
+	box3.rotation.x=-Math.PI/2;
+  	scene.add(box3);
+  	box3.position.set(-125, 20, 0);
+	let box4 = new THREE.Mesh(new THREE.BoxGeometry(40, 20, 40), new THREE.MeshPhongMaterial({color: "hsl(0, 50%, 45%)"}));
+  	scene.add(box4);
+  	box4.position.set(120, 10, -30);
+	let box5 = new THREE.Mesh(new THREE.BoxGeometry(20, 20, 20), new THREE.MeshPhongMaterial({color: "hsl(0, 50%, 45%)"}));
+  	scene.add(box5);
+  	box5.position.set(110, 10, 0);
+	
+}
+
+function paint(){
+	var texture = loader.load('pic/pic1.jpg');
+    var geometry = new THREE.PlaneGeometry(50,62.5 );
+	var material = new THREE.MeshPhongMaterial({
+		map: texture
+	  });
+	var plane = new THREE.Mesh(geometry, material);
+	plane.position.set(-204,50,90);
+	plane.rotation.y=Math.PI/2;
+	scene.add(plane)
+	
+	var texture2 = loader.load('pic/pic2.jpg');
+    var geometry2 = new THREE.PlaneGeometry(47.4,60);
+	var material2 = new THREE.MeshPhongMaterial({
+		map: texture2
+	  });
+	var plane2 = new THREE.Mesh(geometry2, material2);
+	plane2.position.set(-204,50,10);
+	plane2.rotation.y=Math.PI/2;
+	scene.add(plane2)
+    
+	
+	var texture3 = loader.load('pic/182995_1_m.jpg');
+    var geometry3 = new THREE.PlaneGeometry(60.3,50.6);
+	var material3 = new THREE.MeshPhongMaterial({
+		map: texture3
+	  });
+	var plane3 = new THREE.Mesh(geometry3, material3);
+	plane3.position.set(-204,50,-80);
+	plane3.rotation.y=Math.PI/2;
+	scene.add(plane3)
+	
+	var texture3 = loader.load('pic/182995_1_m.jpg');
+    var geometry3 = new THREE.PlaneGeometry(60.3,50.6);
+	var material3 = new THREE.MeshPhongMaterial({
+		map: texture3
+	  });
+	var plane3 = new THREE.Mesh(geometry3, material3);
+	plane3.position.set(-204,50,-80);
+	plane3.rotation.y=Math.PI/2;
+	scene.add(plane3)
+	
+	var texture4 = loader.load('pic/kh.jpg');
+    var geometry4 = new THREE.PlaneGeometry(125,51.3);
+	var material4 = new THREE.MeshPhongMaterial({
+		map: texture4
+	  });
+	var plane4 = new THREE.Mesh(geometry4, material4);
+	plane4.position.set(-110,50,-139);
+	//plane4.rotation.y=Math.PI/2;
+	scene.add(plane4)
+	
+	var texture5 = loader.load('pic/pic6.jpg');
+    var geometry5 = new THREE.PlaneGeometry(50,49.6);
+	var material5 = new THREE.MeshPhongMaterial({
+		map: texture5
+	  });
+	var plane5 = new THREE.Mesh(geometry5, material5);
+	plane5.position.set(-10,50,-90);
+	plane5.rotation.y=-Math.PI/2;
+	scene.add(plane5)
+	
+	var texture6 = loader.load('pic/pic4.jpeg');
+    var geometry6 = new THREE.PlaneGeometry(30,52);
+	var material6 = new THREE.MeshPhongMaterial({
+		map: texture6
+	  });
+	var plane6 = new THREE.Mesh(geometry6, material6);
+	plane6.position.set(-60,50,10);
+	plane6.rotation.y=-Math.PI/2;
+	scene.add(plane6)
+	
+	var texture7 = loader.load('pic/wall162.jpg');
+    var geometry7 = new THREE.PlaneGeometry(150,80);
+	var material7 = new THREE.MeshPhongMaterial({
+		map: texture7
+	  });
+	var plane7 = new THREE.Mesh(geometry7, material7);
+	var plane8 = plane7.clone();
+	plane7.position.set(50,40,-15);
+	plane8.position.set(60,40,-15);
+	plane7.rotation.y=-Math.PI/2;
+	plane8.rotation.y=Math.PI/2;
+	scene.add(plane7)
+	scene.add(plane8)
+	
+	var texture9 = loader.load('pic/68ef5b92.jpg');
+    var geometry9 = new THREE.PlaneGeometry(70,46.6);
+	var material9 = new THREE.MeshPhongMaterial({
+		map: texture9
+	  });
+	var plane9 = new THREE.Mesh(geometry9, material9);
+	plane9.position.set(50,50,-139);
+	//plane4.rotation.y=Math.PI/2;
+	scene.add(plane9)
+	
+	var texture10 = loader.load('pic/IMG_0916_master.jpg');
+    var geometry10 = new THREE.PlaneGeometry(51.2,69);
+	var material10 = new THREE.MeshPhongMaterial({
+		map: texture10
+	  });
+	var plane10 = new THREE.Mesh(geometry10, material10);
+	plane10.position.set(150,50,-139);
+	//plane4.rotation.y=Math.PI/2;
+	scene.add(plane10)
+	
+	var texture11 = loader.load('pic/pic5.jpg');
+    var geometry11 = new THREE.PlaneGeometry(107,50);
+	var material11 = new THREE.MeshPhongMaterial({
+		map: texture11
+	  });
+	var plane11 = new THREE.Mesh(geometry11, material11);
+	plane11.position.set(110,50,138);
+	plane11.rotation.y=Math.PI;
+	scene.add(plane11)
+	
+	var texture12 = loader.load('pic/PAN_Haring-8.jpg');
+    var geometry12 = new THREE.PlaneGeometry(90,54);
+	var material12 = new THREE.MeshPhongMaterial({
+		map: texture12
+	  });
+	var plane12 = new THREE.Mesh(geometry12, material12);
+	plane12.position.set(210,60,40);
+	plane12.rotation.y=-Math.PI/2;
+	scene.add(plane12)
+}
+
+ 
+ class Light {
+  constructor(angle,x, y ,z,a,b,c) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+	this.a = a;
+	this.b = b;
+	this.c = c;
+	this.angle = angle;
+ 
+  }
+  buildlights(){
+   var lampModel = new THREE.Object3D();
+	var layer2 = new THREE.Object3D();
+	var lamp = new THREE.Mesh (new THREE.CylinderGeometry(3,5,10,32), new THREE.MeshLambertMaterial({transparent:true, opacity:0.8}));
+	layer2.add (lamp);
+	lampModel.add (layer2);
+	lamp.position.y = 10;
+	layer2.rotation.z = -Math.PI/6; 
+	
+	  
+	var spotLight = new THREE.SpotLight (0xffffff);
+	spotLight.position.set (this.x,this.y,this.z);
+    spotLight.intensity = 3;
+	
+	spotLight.angle = 0.5;
+	spotLight.penumbra = 1;
+	spotLight.distance = 100;
+	//scene.add (helper = new THREE.SpotLightHelper (spotLight, 3));
+	spotLight.target.position.set(this.a,this.b,this.c);
+  	spotLight.castShadow = true;
+  	scene.add( spotLight.target );
+  	scene.add (spotLight);
+	if(this.angle == 2) lampModel.rotation.y=-Math.PI/2;
+	else if(this.angle == 3) lampModel.rotation.y=-Math.PI;
+	else if(this.angle == 4) lampModel.rotation.y=Math.PI/2;
+	scene.add (lampModel);
+	lampModel.position.copy (spotLight.position);
+	  
+
+  	
+  }
+
+}
+
+
+var scene, renderer, camera;
+var camera1;
+var cameraObj;
+var safety = false;
+var angle = 0;
+var sign = 1;
+
+
+init();
+animate();
+
+$("#toggle").click(function() {
+	safety = !safety;
+});
+
+
+
+function init() {
+	
+	
+  scene = new THREE.Scene();
+  renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x888888);
+  document.body.appendChild(renderer.domElement);
+
+  camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+  camera.position.y = 300;
+  camera.position.z = 500;
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+  var gridXZ = new THREE.GridHelper(200, 20, 'red', 'white');
+  //scene.add(gridXZ);
+
+  window.addEventListener('resize', onWindowResize, false)
+
+///////////////////////////////
+
+
+
+  /////////////////////////////////////////
+  light = new THREE.DirectionalLight(0xffffff);
+  light.position.set(200, 200, 0);
+  scene.add(light);
+   light2 = new THREE.DirectionalLight(0xffffff);
+  light2.position.set(-200, 200, 0);
+  scene.add(light2);
+   light3 = new THREE.DirectionalLight(0xffffff);
+  light3.position.set(0, 500, 1000);
+  scene.add(light3);
+  light4 = new THREE.DirectionalLight(0xffffff);
+  light4.position.set(0, 500, -1000);
+  scene.add(light4);
+  light.intensity = .5;
+  light2.intensity = .5;  
+  light3.intensity = .5;
+light4.intensity = .5;
+  ///////////////////////
+  loader = new THREE.TextureLoader();
+  loader.crossOrigin = '';
+  
+/////////////////////
+  
+  var texture = loader.load('pic/floortexture.jpg');
+  var geometry = new THREE.PlaneGeometry(430, 300, 32);
+  var material = new THREE.MeshPhongMaterial({
+		map: texture
+	  });
+  var plane = new THREE.Mesh(geometry, material);
+  plane.rotation.x=-Math.PI/2;
+  scene.add(plane)
+	
+  var cubeGeom = new THREE.BoxGeometry(440, 300, 5);
+  var wallMeterial = new THREE.MeshPhongMaterial({
+    color: 0x000000,
+    transparent: true,
+    opacity: 0.2,
+    side: THREE.DoubleSide,
+  });
+  var celing = new THREE.Mesh(cubeGeom, wallMeterial);
+  celing.position.y=118;
+  celing.position.x=5;
+  celing.rotation.x=-Math.PI/2;
+  scene.add(celing)
+    
+  wall();
+  compartment();
+  chair();
+  paint();
+  //buildLight();
+	
+ //////////////////
+  sCam = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+  
+  cameraObj = new THREE.Object3D();
+  cameraBody = new THREE.Mesh (new THREE.BoxGeometry (20,12,5),new THREE.MeshPhongMaterial({color: 0x000000}));
+  lens = new THREE.Mesh (new THREE.CylinderGeometry (5,5,10), new THREE.MeshPhongMaterial({color: 0x000000}));
+  lens.position.z = -5;
+  lens.rotation.x = Math.PI/2;
+  cameraObj.add (cameraBody, lens);
+
+  cameraCase = new THREE.Object3D();
+  cameraCase.add (cameraObj);
+  cameraCase.position.set (-180, 105, 130);
+  scene.add (cameraCase);
+
+  // manual aiming, from (-50,40,50) to (0,0,0)
+  cameraCase.rotation.y = -Math.PI/4; 
+  cameraCase.rotation.x = -Math.PI/8;
+  cameraCase.rotation.order = 'YXZ'
+	////////
+  Light1 = new Light(1,-170,100,90,-204,50,90);
+  Light1.buildlights();
+  var Light2 = new Light(1,-170,100,10,-204,50,10);
+  Light2.buildlights();
+  var Light3 = new Light(1,-170,100,-80,-204,50,-80);
+  Light3.buildlights();
+  var Light4 = new Light(2,-110,100,-80,-110,50,-139);
+  Light4.buildlights();
+  var Light5 = new Light(2,50,100,-80,50,50,-139);
+  Light5.buildlights();
+  var Light6 = new Light(2,150,100,-80,150,50,-139);
+  Light6.buildlights();
+  var Light7 = new Light(3,-50,100,-90,10,50,-90);
+  Light7.buildlights();
+  var Light8 = new Light(3,-90,100,10,-60,60,10);
+  Light8.buildlights();
+  var Light9 = new Light(3,180,100,40,210,60,40);
+  Light9.buildlights();
+  var Light10 = new Light(4,110,100,108,110,50,138);
+  Light10.buildlights();
+
+}
+
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+function animate() {
+  angle += 0.003*sign;
+  if (angle > 0.3 || angle < -0.3)
+  	sign *= -1;
+  cameraObj.rotation.y = angle;
+
+  sCam.matrixWorld.copy (cameraObj.matrixWorld);
+  sCam.matrixAutoUpdate = false;
+  
+  let cam = safety ? sCam : camera;
+  renderer.render(scene, cam);
+  
+  requestAnimationFrame(animate);
+  
+}
+
+
+</script>
+</body>
+</html>
