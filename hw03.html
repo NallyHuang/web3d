@@ -1,0 +1,621 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>HW03</title>
+</head>
+<style>
+	#container {
+  width: 50vw;
+  height: 30vw;
+  float: left;
+  background-color: yellow;
+  margin: 10px;
+}
+
+	</style>
+<body>
+	<h1 style="font-size:2em; text-align:center; margin:15px"> 
+   Keith Haring Exhibition
+</h1>
+
+<hr>
+
+<div id="container"></div>
+	<div id ="intro" ></div>
+	<br>
+	  <button id="tView" style=" width:10%">Light</button>
+  
+<input type=range min=-0.5 max=0.9 step=0.1 id='intensity'> intensity <br>
+<!--canvas id='mycanvas'></canvas-->
+ 
+	<select name="selectpaint" id="selectpaint" onchange="changecamera();">
+		<option value="0">Select</option> 
+		<option value="1">Dog</option> 
+		<option value="2">Untitled-1</option> 
+		<option value="3">24h du Mans</option> 
+		<option value="4">Dancing people</option> 
+		<option value="5">Running heart</option> 
+		<option value="6">Cup man</option> 
+		<option value="9">Untitled-2</option> 
+		<option value="10">Fill Your Head with Fun! Start Reading! </option> 
+		<option value="11">Untitled-1985</option>
+		<option value="12">American music festival</option>
+	</select>
+	<br>
+
+
+	<div id="camera1" onclick="clickCamera1()" style="position:relative;top:30px;left:10px;background:pink; width:20vw; height:20vh;float:left;overflow:hidden">
+<canvas id="mycanvas2"></canvas></div><br>
+		<div id="camera2" onclick="clickCamera2()" style="position:relative;top:10px;left:30px;background:pink; width:20vw; height:20vh;float:left;overflow:hidden">
+<canvas id="mycanvas3"></canvas></div>
+	
+	
+
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r78/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+		
+<script>
+	var scene, renderer, camera;
+var mouse = new THREE.Vector2();
+var raycaster = new THREE.Raycaster();
+var pickables = [];
+	
+var lightsOff = false;
+var spotlightsOff = false;
+$('#intensity').change ( function() {
+	console.log ( $(this).val() );
+  	light.intensity = $(this).val();
+	light2.intensity = $(this).val();
+	light3.intensity = $(this).val();
+	light4.intensity = $(this).val();
+})
+$('#tView').click(function() {
+	lightsOff = !lightsOff;
+  
+  if (lightsOff) {
+  	light.intensity = -0.2;
+    light2.intensity = -0.2;
+	light3.intensity = -0.2;
+	light4.intensity = -0.2;
+	
+  } else {
+  	light.intensity = .3;
+    light2.intensity = .3;  
+	light3.intensity = .3;
+	light4.intensity = .3;
+  }
+});
+
+function wall(){
+	let wall = new THREE.Mesh(new THREE.BoxGeometry(300, 100, 10), new THREE.MeshPhongMaterial({color: "hsl(35, 5%, 80%)"}));
+  scene.add(wall);
+  wall.position.set(65, 50, 145);
+  let wall2 = new THREE.Mesh(new THREE.BoxGeometry(60, 100, 10), new THREE.MeshPhongMaterial({color: "hsl(35, 5%, 80%)"}));
+  scene.add(wall2);
+  wall2.position.set(-175, 50, 145);
+  let wall3 = new THREE.Mesh(new THREE.BoxGeometry(10, 100, 300), new THREE.MeshPhongMaterial({color: "hsl(35, 5%, 80%)"}));
+  scene.add(wall3);
+  wall3.position.set(-210, 50, 0);
+  let wall4 = new THREE.Mesh(new THREE.BoxGeometry(430, 100, 10), new THREE.MeshPhongMaterial({color: "hsl(35, 5%, 80%)"}));
+  scene.add(wall4);
+  wall4.position.set(5, 50, -145);
+  let wall5 = new THREE.Mesh(new THREE.BoxGeometry(10, 100, 210), new THREE.MeshPhongMaterial({color: "hsl(35, 5%, 80%)"}));
+  scene.add(wall5);
+  wall5.position.set(220, 50, 45);
+
+}
+
+function compartment(){
+	let par = new THREE.Mesh(new THREE.BoxGeometry(5, 100, 100), new THREE.MeshPhongMaterial({color: "hsl(35, 5%, 80%)"}));
+  scene.add(par);
+  par.position.set(-5, 50, 95);
+  let par2 = new THREE.Mesh(new THREE.BoxGeometry(5, 100, 100), new THREE.MeshPhongMaterial({color: "hsl(35, 5%, 80%)"}));
+  scene.add(par2);
+  par2.position.set(-5, 50, -90);
+  let par3 = new THREE.Mesh(new THREE.BoxGeometry(5, 100, 100), new THREE.MeshPhongMaterial({color: "hsl(35, 5%, 80%)"}));
+  scene.add(par3);
+  par3.position.set(-55, 50, 10);
+  let par4 = new THREE.Mesh(new THREE.BoxGeometry(55, 100, 5), new THREE.MeshPhongMaterial({color: "hsl(35, 5%, 80%)"}));
+  scene.add(par4);
+  par4.position.set(-30, 50, -40);
+	let par5 = new THREE.Mesh(new THREE.BoxGeometry(3, 80, 150), new THREE.MeshPhongMaterial({color: "hsl(35, 5%, 80%)"}));
+  scene.add(par5);
+  par5.position.set(55, 40, -15);
+  let par6 = new THREE.Mesh(new THREE.BoxGeometry(80, 80, 3), new THREE.MeshPhongMaterial({color: "hsl(220, 60%, 45%)"}));
+  scene.add(par6);
+  par6.position.set(115, 40, 65);
+  let par7 = new THREE.Mesh(new THREE.BoxGeometry(3, 80, 30), new THREE.MeshPhongMaterial({color: "hsl(220, 60%, 45%)"}));
+  scene.add(par7);
+  par7.position.set(155, 40, 50);
+}
+function chair(){
+	let box = new THREE.Mesh(new THREE.BoxGeometry(20, 20, 3), new THREE.MeshPhongMaterial({color: "hsl(220, 60%, 45%)"}));
+  	scene.add(box);
+  	box.position.set(-125, 10, 25);
+	let box2 = new THREE.Mesh(new THREE.BoxGeometry(20, 20, 3), new THREE.MeshPhongMaterial({color: "hsl(220, 60%, 45%)"}));
+  	scene.add(box2);
+  	box2.position.set(-125, 10, -25);
+	let box3 = new THREE.Mesh(new THREE.BoxGeometry(20, 56, 3), new THREE.MeshPhongMaterial({color: "hsl(220, 60%, 45%)"}));
+	box3.rotation.x=-Math.PI/2;
+  	scene.add(box3);
+  	box3.position.set(-125, 20, 0);
+	let box4 = new THREE.Mesh(new THREE.BoxGeometry(40, 20, 40), new THREE.MeshPhongMaterial({color: "hsl(0, 50%, 45%)"}));
+  	scene.add(box4);
+  	box4.position.set(120, 10, -30);
+	let box5 = new THREE.Mesh(new THREE.BoxGeometry(20, 20, 20), new THREE.MeshPhongMaterial({color: "hsl(0, 50%, 45%)"}));
+  	scene.add(box5);
+  	box5.position.set(110, 10, 0);
+	
+}
+function paint(){
+	var texture = loader.load('pic/pic1.jpg');
+    var geometry = new THREE.PlaneGeometry(50,62.5 );
+	var material = new THREE.MeshPhongMaterial({
+		map: texture
+	  });
+	var plane = new THREE.Mesh(geometry, material);
+	plane.position.set(-204,50,90);
+	plane.rotation.y=Math.PI/2;
+	scene.add(plane)
+	plane.name = 'plane1';
+	
+	var texture2 = loader.load('pic/pic2.jpg');
+    var geometry2 = new THREE.PlaneGeometry(47.4,60);
+	var material2 = new THREE.MeshPhongMaterial({
+		map: texture2
+	  });
+	var plane2 = new THREE.Mesh(geometry2, material2);
+	plane2.position.set(-204,50,10);
+	plane2.rotation.y=Math.PI/2;
+	scene.add(plane2)
+	plane2.name = 'plane2';
+    
+	
+	var texture3 = loader.load('pic/182995_1_m.jpg');
+    var geometry3 = new THREE.PlaneGeometry(60.3,50.6);
+	var material3 = new THREE.MeshPhongMaterial({
+		map: texture3
+	  });
+	var plane3 = new THREE.Mesh(geometry3, material3);
+	plane3.position.set(-204,50,-80);
+	plane3.rotation.y=Math.PI/2;
+	scene.add(plane3)
+	plane3.name = 'plane3';
+	
+	
+	
+	var texture4 = loader.load('pic/kh.jpg');
+    var geometry4 = new THREE.PlaneGeometry(125,51.3);
+	var material4 = new THREE.MeshPhongMaterial({
+		map: texture4
+	  });
+	var plane4 = new THREE.Mesh(geometry4, material4);
+	plane4.position.set(-110,50,-139);
+	//plane4.rotation.y=Math.PI/2;
+	scene.add(plane4)
+	plane4.name = 'plane4';
+	
+	var texture5 = loader.load('pic/pic6.jpg');
+    var geometry5 = new THREE.PlaneGeometry(50,49.6);
+	var material5 = new THREE.MeshPhongMaterial({
+		map: texture5
+	  });
+	var plane5 = new THREE.Mesh(geometry5, material5);
+	plane5.position.set(-10,50,-90);
+	plane5.rotation.y=-Math.PI/2;
+	scene.add(plane5)
+	plane5.name = 'plane5';
+	
+	var texture6 = loader.load('pic/pic4.jpeg');
+    var geometry6 = new THREE.PlaneGeometry(30,52);
+	var material6 = new THREE.MeshPhongMaterial({
+		map: texture6
+	  });
+	var plane6 = new THREE.Mesh(geometry6, material6);
+	plane6.position.set(-60,50,10);
+	plane6.rotation.y=-Math.PI/2;
+	scene.add(plane6)
+	plane6.name = 'plane6';
+	
+	var texture7 = loader.load('pic/wall162.jpg');
+    var geometry7 = new THREE.PlaneGeometry(150,80);
+	var material7 = new THREE.MeshPhongMaterial({
+		map: texture7
+	  });
+	var plane7 = new THREE.Mesh(geometry7, material7);
+	var plane8 = plane7.clone();
+	plane7.position.set(50,40,-15);
+	plane8.position.set(60,40,-15);
+	plane7.rotation.y=-Math.PI/2;
+	plane8.rotation.y=Math.PI/2;
+	scene.add(plane7)
+	scene.add(plane8)
+	plane7.name = 'plane7';
+	plane8.name = 'plane8';
+	
+	var texture9 = loader.load('pic/68ef5b92.jpg');
+    var geometry9 = new THREE.PlaneGeometry(70,46.6);
+	var material9 = new THREE.MeshPhongMaterial({
+		map: texture9
+	  });
+	var plane9 = new THREE.Mesh(geometry9, material9);
+	plane9.position.set(50,50,-139);
+	//plane4.rotation.y=Math.PI/2;
+	scene.add(plane9)
+	plane9.name = 'plane9';
+	
+	var texture10 = loader.load('pic/IMG_0916_master.jpg');
+    var geometry10 = new THREE.PlaneGeometry(51.2,69);
+	var material10 = new THREE.MeshPhongMaterial({
+		map: texture10
+	  });
+	var plane10 = new THREE.Mesh(geometry10, material10);
+	plane10.position.set(150,50,-139);
+	//plane4.rotation.y=Math.PI/2;
+	scene.add(plane10)
+	plane10.name = 'plane10';
+	
+	var texture11 = loader.load('pic/pic5.jpg');
+    var geometry11 = new THREE.PlaneGeometry(107,50);
+	var material11 = new THREE.MeshPhongMaterial({
+		map: texture11
+	  });
+	var plane11 = new THREE.Mesh(geometry11, material11);
+	plane11.position.set(110,50,138);
+	plane11.rotation.y=Math.PI;
+	scene.add(plane11)
+	plane11.name = 'plane11';
+	
+	var texture12 = loader.load('pic/PAN_Haring-8.jpg');
+    var geometry12 = new THREE.PlaneGeometry(90,54);
+	var material12 = new THREE.MeshPhongMaterial({
+		map: texture12
+	  });
+	var plane12 = new THREE.Mesh(geometry12, material12);
+	plane12.position.set(210,60,40);
+	plane12.rotation.y=-Math.PI/2;
+	scene.add(plane12)
+	pickables.push(plane);
+	plane12.name = 'plane12';
+
+
+  pickables.push (plane,plane2,plane3,plane4,plane5,plane6,plane7,plane8,plane9,plane10,plane11,plane12);
+	
+	
+}
+
+ class Light {
+  constructor(angle,x, y ,z,a,b,c) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+	this.a = a;
+	this.b = b;
+	this.c = c;
+	this.angle = angle;
+ 
+  }
+  buildlights(){
+   var lampModel = new THREE.Object3D();
+	var layer2 = new THREE.Object3D();
+	var lamp = new THREE.Mesh (new THREE.CylinderGeometry(3,5,10,32), new THREE.MeshLambertMaterial({transparent:true, opacity:0.8}));
+	layer2.add (lamp);
+	lampModel.add (layer2);
+	lamp.position.y = 10;
+	layer2.rotation.z = -Math.PI/6; 
+	
+	  
+	var spotLight = new THREE.SpotLight (0xffffff);
+	spotLight.position.set (this.x,this.y,this.z);
+    spotLight.intensity = 2;
+	
+	spotLight.angle = 0.5;
+	spotLight.penumbra = 1;
+	spotLight.distance = 100;
+	//scene.add (helper = new THREE.SpotLightHelper (spotLight, 3));
+	spotLight.target.position.set(this.a,this.b,this.c);
+  	spotLight.castShadow = true;
+  	scene.add( spotLight.target );
+  	scene.add (spotLight);
+	if(this.angle == 2) lampModel.rotation.y=-Math.PI/2;
+	else if(this.angle == 3) lampModel.rotation.y=-Math.PI;
+	else if(this.angle == 4) lampModel.rotation.y=Math.PI/2;
+	scene.add (lampModel);
+	lampModel.position.copy (spotLight.position);
+	  
+  	
+  }
+}
+
+var camera1;
+var cameraObj;
+var safety = false;
+var keys = [
+  [0, 0], [0.4, 0.6], [0.5, 0.6], [0.9, 0], [1, 0]
+];
+var T = 2;
+var clock = new THREE.Clock();
+var ts = clock.getElapsedTime();
+
+
+	
+init();
+animate();
+
+function init() {
+
+  renderer = new THREE.WebGLRenderer({
+    antialias: true
+  });
+  var ww = $('#container').innerWidth();
+  var hh = $('#container').innerHeight();
+  renderer.setSize(ww, hh);
+  var ww2 = $('#camera1').innerWidth();
+  var hh2 = $('#camera1').innerHeight();
+  var cc2 = document.getElementById('mycanvas2');
+       renderer2 = new THREE.WebGLRenderer({
+            canvas: cc2
+        });
+  renderer2.setSize(ww2, hh2);
+ var ww2 = $('#camera2').innerWidth();
+  var hh2 = $('#camera2').innerHeight();
+  var cc2 = document.getElementById('mycanvas3');
+       renderer3 = new THREE.WebGLRenderer({
+            canvas: cc2
+        });
+  renderer2.setSize(ww2, hh2);
+  renderer.setClearColor(0x555555);
+  $('#container').append(renderer.domElement);
+
+  scene = new THREE.Scene();
+
+  camera = new THREE.PerspectiveCamera(50, ww / hh, 1, 10000);
+  camera.position.x = 0;
+  camera.position.y = 80;
+  camera.position.z = 400;
+
+	let controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+  var gridXZ = new THREE.GridHelper(200, 20, 'red', 'white');
+  scene.add(gridXZ);
+
+  window.addEventListener('resize', onWindowResize, false);
+  //$('#container').on ("mousemove", onDocumentMouseMove);
+  window.addEventListener('mousedown', onDocumentMouseDown, false);
+ 	//////////////////////////////////////
+	  light = new THREE.DirectionalLight(0xffffff);
+  light.position.set(200, 200, 0);
+  scene.add(light);
+   light2 = new THREE.DirectionalLight(0xffffff);
+  light2.position.set(-200, 200, 0);
+  scene.add(light2);
+   light3 = new THREE.DirectionalLight(0xffffff);
+  light3.position.set(0, 500, 1000);
+  scene.add(light3);
+  light4 = new THREE.DirectionalLight(0xffffff);
+  light4.position.set(0, 500, -1000);
+  scene.add(light4);
+  light.intensity = .5;
+  light2.intensity = .5;  
+  light3.intensity = .5;
+light4.intensity = .5;
+	
+	loader = new THREE.TextureLoader();
+  loader.crossOrigin = '';
+	///////
+	 wall();
+	 paint();
+	compartment();
+	chair();
+	//////////////////////////////////
+    light = new THREE.DirectionalLight(0xffffff);
+  light.position.set(200, 200, 0);
+  scene.add(light);
+   light2 = new THREE.DirectionalLight(0xffffff);
+  light2.position.set(-200, 200, 0);
+  scene.add(light2);
+   light3 = new THREE.DirectionalLight(0xffffff);
+  light3.position.set(0, 500, 1000);
+  scene.add(light3);
+  light4 = new THREE.DirectionalLight(0xffffff);
+  light4.position.set(0, 500, -1000);
+  scene.add(light4);
+  light.intensity = .5;
+  light2.intensity = .5;  
+  light3.intensity = .5;
+light4.intensity = .5;
+	/////////
+	  Light1 = new Light(1,-170,100,90,-204,50,90);
+  Light1.buildlights();
+  var Light2 = new Light(1,-170,100,10,-204,50,10);
+  Light2.buildlights();
+  var Light3 = new Light(1,-170,100,-80,-204,50,-80);
+  Light3.buildlights();
+  var Light4 = new Light(2,-110,100,-80,-110,50,-139);
+  Light4.buildlights();
+  var Light5 = new Light(2,50,100,-80,50,50,-139);
+  Light5.buildlights();
+  var Light6 = new Light(2,150,100,-80,150,50,-139);
+  Light6.buildlights();
+  var Light7 = new Light(3,-50,100,-90,10,50,-90);
+  Light7.buildlights();
+  var Light8 = new Light(3,-90,100,10,-60,60,10);
+  Light8.buildlights();
+  var Light9 = new Light(3,180,100,40,210,60,40);
+  Light9.buildlights();
+  var Light10 = new Light(4,110,100,108,110,50,138);
+  Light10.buildlights();
+/////////////////////
+	sCam = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+	sCam2 = sCam.clone();
+  
+  cameraObj = new THREE.Object3D();
+  cameraBody = new THREE.Mesh (new THREE.BoxGeometry (20,12,5),new THREE.MeshPhongMaterial({color: 0x000000}));
+  lens = new THREE.Mesh (new THREE.CylinderGeometry (5,5,10), new THREE.MeshPhongMaterial({color: 0x000000}));
+  lens.position.z = -5;
+  lens.rotation.x = Math.PI/2;
+  cameraObj.add (cameraBody, lens);
+  cameraCase = new THREE.Object3D();
+  cameraCase.add (cameraObj);
+  cameraCase.position.set (-180, 105, 130);
+  scene.add (cameraCase);
+  // manual aiming, from (-50,40,50) to (0,0,0)
+  cameraCase.rotation.y = -Math.PI/4; 
+  cameraCase.rotation.x = -Math.PI/8;
+  cameraCase.rotation.order = 'YXZ'
+	
+  cameraObj2 = cameraObj.clone();
+  let cameraCase2 = new THREE.Object3D();
+  cameraCase2.add (cameraObj2);
+  cameraCase2.position.set (200, 105, -139);
+  scene.add (cameraCase2);
+  // manual aiming, from (-50,40,50) to (0,0,0)
+  cameraCase2.rotation.y = Math.PI/1.2; 
+  cameraCase2.rotation.x = -Math.PI/8;
+  cameraCase2.rotation.order = 'YXZ'
+  
+	
+	
+}
+
+function changecamera() {
+	if(document.getElementById("selectpaint").value==0){
+		camera.position.set(0,200,400);
+		camera.lookAt(new THREE.Vector3(0,0,0))
+
+	}
+	else if(document.getElementById("selectpaint").value==1){
+		camera.position.set(-100,50,100);
+		camera.lookAt({x:-200,y:50,z:90});
+	}
+	else if(document.getElementById("selectpaint").value==2){
+		camera.position.set(-100,50,20);
+		camera.lookAt({x:-200,y:50,z:20});
+	}
+	else if(document.getElementById("selectpaint").value==3){
+		camera.position.set(-100,50,-60);
+		camera.lookAt({x:-200,y:50,z:-60});
+	}
+	else if(document.getElementById("selectpaint").value==4){
+		camera.position.set(-120,60,0);
+		camera.lookAt({x:-120,y:50,z:-110});
+	}
+	else if(document.getElementById("selectpaint").value==5){
+		camera.position.set(-120,60,-90);
+		camera.lookAt({x:-10,y:50,z:-90});
+	}
+	else if(document.getElementById("selectpaint").value==6){
+		camera.position.set(-150,60,10);
+		camera.lookAt({x:-60,y:60,z:10});
+		}
+	else if(document.getElementById("selectpaint").value==9){
+		camera.position.set(50,80,-90);
+		camera.lookAt({x:50,y:70,z:-110});
+	}
+	else if(document.getElementById("selectpaint").value==10){
+		camera.position.set(150,50,-30);
+		camera.lookAt({x:150,y:50,z:-110});
+	}
+	else if(document.getElementById("selectpaint").value==11){
+		camera.position.set(190,50,70);
+		camera.lookAt({x:130,y:50,z:110});
+	}
+	else if(document.getElementById("selectpaint").value==12){
+		camera.position.set(140,60,0);
+		camera.lookAt({x:230,y:60,z:40});
+	}
+	
+}
+
+function onWindowResize() {
+  var ww = $('#container').innerWidth();
+  var hh = $('#container').innerHeight();
+  camera.aspect = ww / hh;
+  camera.updateProjectionMatrix();
+  renderer.setSize(ww, hh);
+}
+
+function onDocumentMouseDown(event) {
+
+  //event.preventDefault();
+  
+  // many unsuccessful tries ...
+/*
+  mouse.x = ((event.clientX - event.target.offsetLeft) / $('#container').innerWidth()) * 2 - 1;
+  mouse.y = -((event.clientY - event.target.offsetTop) / $('#container').innerHeight()) * 2 + 1;
+*/
+  
+  var viewportPos =$('#container').get(0).getBoundingClientRect(); 
+	mouse.x = ((event.clientX - viewportPos.left) / $('#container').innerWidth()) * 2 - 1;
+  mouse.y = -((event.clientY - viewportPos.top) / $('#container').innerHeight()) * 2 + 1;
+
+	raycaster.setFromCamera(mouse, camera);
+  var intersects = raycaster.intersectObjects (pickables);
+  if (intersects.length > 0) {
+    //cyl.position.copy(intersects[0].point);
+    if (intersects[0].object.name === "plane1") {
+    		$('#intro').text('Dog - 兩腳直立、對天狂吠、成群起舞，踐踏小人，不論是以什麼樣的形式，「狗」在哈林的藝術中隨處可見，也成為辨認他的藝術的經典符號。這難以不讓人聯想到埃及神話中狗頭人身、看守死者的阿奴比斯神。他畫中的狗便是人的神像化，是專權的政府或是官僚體系權力濫用中對人的壓迫。');}
+	else if (intersects[0].object.name === "plane2") 
+    	$('#intro').text('Untitled - 每個人心中其實都有一個看不見的鎖，如果無法打開，就如同一輩子被禁錮，動彈不得。可是往往擁有鑰匙的好情人，卻一生很難尋覓。配錯對或找錯人，自己的心還是無法自由，唯有找到適合的鑰匙，心鎖才能真正完全被打開。');
+    else if (intersects[0].object.name === "plane3") 
+    	$('#intro').text('24h du Mans - 為24hr 耐力賽之旅所作');
+    else if (intersects[0].object.name === "plane4") 
+    	$('#intro').text('Dancing people - 這項精力充沛的作品中有五位Keith Haring的標誌性舞蹈人物，每一位都有不同的颜色。');
+    else if (intersects[0].object.name === "plane5") 
+    	$('#intro').text('Running heart - 一颗黑色線條勾勒的出的红心，正在大步奔跑，那種熱情甜蜜的感覺，就好像你的心跳也開始加速了一樣。');
+    else if (intersects[0].object.name === "plane6") 
+    	$('#intro').text('Cup man - 在一个明亮的红色背景和藍色的地板上有个像俄羅斯娃娃一样黄色的身影坐在一層層的杯子裡。');
+    else if (intersects[0].object.name === "plane9") 
+		$('#intro').text('Untitled - 這是keith haring的經典畫作，以四格漫畫的方式呈現，敘述紐約人自由奔放的特質');
+	  else if (intersects[0].object.name === "plane10") 
+		$('#intro').text('Fill Your Head with Fun! Start Reading! - 作者想要推廣多閱讀能夠激發創造力的概念，讓你的腦被繽紛的內容填滿。');
+	  else if (intersects[0].object.name === "plane11") 
+		$('#intro').text('Untitled-1985 - 關懷兒童所作，下方有很多的人集結成兩隻手象徵人們要一起關愛世界。');
+	  else if (intersects[0].object.name === "plane12") 
+		$('#intro').text('American music festival-描述紐約的芭蕾舞團');
+  }
+}
+function keyframe(t) {
+  var s = ((t - ts) % T) / T;
+  //console.log(s);
+  for (var i = 1; i < keys.length; i++) {
+    if (keys[i][0] > s) break;
+  }
+  // take i-1
+  var ii = i - 1;
+  console.log (ii)
+  var a = (s - keys[ii][0]) / (keys[ii + 1][0] - keys[ii][0]);
+  intKey = keys[ii][1] * (1 - a) + keys[ii + 1][1] * a;
+  //console.log (a)
+	return intKey;
+  //console.log (intKey);  // array linear combo?!
+}
+
+
+function animate() {
+  let intkey = keyframe(clock.getElapsedTime());
+  cameraObj.rotation.y = intkey - 0.2;
+  cameraObj2.rotation.y = intkey - 0.2;
+  requestAnimationFrame(animate);
+  sCam.matrixWorld.copy (cameraObj.matrixWorld);
+  sCam.matrixAutoUpdate = false;
+  sCam2.matrixWorld.copy (cameraObj2.matrixWorld);
+  sCam2.matrixAutoUpdate = false;
+  //let cam = safety ? sCam : camera;
+  
+	renderer.render(scene, camera);
+	renderer2.render(scene, sCam);
+	renderer3.render(scene, sCam2);
+}
+
+function render() {
+  renderer.render(scene, camera);
+}
+
+	</script>
+</body>
+</html>
