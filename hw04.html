@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+
+    <html>
+
+
+    <head>
+    <style>
+        
+    </style>
+     <hr>
+    <h1 style="text-align:center"> HW4 </h1>
+        <hr>
+      <div id="container" style="float:left; margin:3px; width:55vw; height:40vw">
+</div>
+        <audio id="collisionsound" style="display:none">
+                    <source src="collisionsound.mp3" type='audio/wav'>
+                    </audio>
+          <div style="float:left; margin-left: 10px; width:32vw;">Radius:
+  <input type=range min=5 max=20 step=0.5 value="10" id='rad'>
+  <br><br>Sound
+			  <input type="checkbox"style="margin-left: 10px;"id="sound" /><br><br>
+  <button id="toggle" style="height: 30% width:100%">Toggle motion</button><br><br>
+  <font id='texts' style="margin-left:10px" >No collison!</font>
+                <br>
+  
+</div>
+      
+        </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
+    <script src="https://threejs.org/examples/js/controls/OrbitControls.js">
+    </script>
+    <script src="https://jyunming-chen.github.io/tutsplus/js/KeyboardState.js"></script>
+      <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+
+    <script>
+    var motion=true;
+    var r=10;
+    var play=true;
+    var circle;
+    var ball;
+    
+$('#rad').change ( function() {
+  circle.geometry = new THREE.CircleGeometry($(this).val(), 32)
+  r = $(this).val();
+  
+});
+    $('#toggle').click ( function() {
+      motion = !motion;
+  	  console.log (motion)
+    });
+    
+	class Circ {
+      constructor (mesh, rad, color) {
+        this.mesh = mesh;
+        this.mesh.position.y = 5;
+        this.radius = rad;
+        this.pos = new THREE.Vector3()
+        this.vel = new THREE.Vector3()
+        this.force = new THREE.Vector3()
+        scene.add (this.mesh);
+        this.mesh.material.color.copy (color.clone());
+      }
+      
+      update (dt) {
+		  
+     		
+		  if(!motion) 
+			  dt=0;
+		  this.vel.add (this.force.clone().multiplyScalar (dt))
+		  this.pos.add (this.vel.clone().multiplyScalar(dt))
+		  if (this.pos.y < r-100) {
+			  collisionsound.play();
+			  this.pos.y = r-100;
+			  this.vel.y *= -1;
+		  }
+			 if(this.pos.y > 100-r){
+				 collisionsound.play();
+			  this.pos.y = 100-r;
+			  this.vel.y *= -1;
+
+			}
+			 if(this.pos.x > 100-r){
+				 collisionsound.play();
+			  this.pos.x = 100-r;
+			  this.vel.x *= -1;
+
+
+			}
+		   if(this.pos.x < r-100){
+			   collisionsound.play();
+			  this.pos.x =r-100;
+			  this.vel.x *= -1;
+
+		   }
+			this.mesh.position.copy (this.pos)
+		  }
+      
+    }
+    
+	
+    
+    var camera, scene, renderer, light;
+    var keyboard = new KeyboardState();
+    var rectangle,angle=0;
+    var boxs =[];
+	var rec;
+    var balls = [];
+    var mouse = new THREE.Vector2();
+    var raycaster;
+    var pickables=[];
+    var R;
+    var rxMax, ryMax, rxMin, ryMin;
+    var cx,cy;
+    var r;
+	var collisionsound;
+    
+    init();
+    animate();
+      
+    function init() 
+    {
+      
+      collisionsound = document.getElementById ('collisionsound');
+      var ww = $("#container").innerWidth();
+      var hh = $("#container").innerHeight();
+      renderer = new THREE.WebGLRenderer();
+      renderer.setSize(ww, hh);
+      renderer.setClearColor(0x000000);
+		
+      $("#container").append(renderer.domElement);
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+      camera.position.z = 230;
+     
+	  let controls = new THREE.OrbitControls(camera, renderer.domElement);
+    
+      ///////////////////////////////////////////////////////////
+	   var plane = new THREE.Mesh (new THREE.PlaneGeometry (200,200), new THREE.MeshBasicMaterial({color:0x888888}))
+       scene.add (plane);
+       pickables = [plane];
+      
+      circle = new THREE.Mesh (new THREE.CircleGeometry (r,20), new THREE.MeshBasicMaterial() )
+      ball = new Circ(circle, r, new THREE.Color (0x00ff00))
+      let ballx = Math.random()*50;
+      let ballvx = Math.random()*50;
+      let ballvy = Math.random()*50;
+      ball.vel.set (ballvx, ballvy, 0)
+      ball.pos.set (ballx, ballx, 1)
+      
+	  raycaster = new THREE.Raycaster();
+      window.addEventListener('mousedown', onDocumentMouseDown, false);
+      rec = new THREE.Mesh(new THREE.PlaneGeometry(50,20),new THREE.MeshBasicMaterial({color:0xffffff}))
+	  scene.add(rec);
+		
+	  let geometry = new THREE.Geometry();
+		  geometry.vertices.push(
+			new THREE.Vector3(-100, -100, 0),
+			new THREE.Vector3(100, -100, 0),
+			new THREE.Vector3(100, 100, 0),
+			new THREE.Vector3(-100, 100, 0),
+			new THREE.Vector3(-100, -100, 0));
+		 let border = new THREE.Line(geometry, new THREE.LineBasicMaterial({
+			color: 0x0000ff
+		  }));
+		  scene.add(border);
+
+		 window.addEventListener('resize', onWindowResize, false);
+    }
+    ///////////////////////////////////////
+    function onDocumentMouseDown(event) {
+      var ww = $("#container").innerWidth();
+      var hh = $("#container").innerHeight();
+     
+      mouse.x = (event.clientX /ww) * 2-1 ;
+      mouse.y = -(event.clientY / hh) * 2+1 ;
+      
+      raycaster.setFromCamera(mouse, camera);
+      var intersects = raycaster.intersectObjects(pickables);
+      if (intersects.length > 0) {
+		  rec.position.copy(intersects[0].point);
+		  rec.position.y = intersects[0].point.y + 50;
+      }
+    }
+    function checkCollision () {
+		$.get( "http://127.0.0.1:1337/api?radius="+ r + "&rxMax=" + rxMax +"&ryMax=" + ryMax +"&rxMin=" + rxMin + "&ryMin=" + ryMin + "&cx=" + cx + "&cy=" + cy, function( data ) {
+		if(data && data.output){		
+                result = parseInt(data.output, 10);			
+     
+            }
+
+
+	});
+}
+    function onWindowResize() {
+      var ww = $("#container").innerWidth();
+      var hh = $("#container").innerHeight();
+      camera.aspect = ww / hh;
+      camera.updateProjectionMatrix();
+      renderer.setSize(ww, hh);
+    }
+		
+    function animate() {
+        ball.update (0.1)
+        cx = ball.mesh.position.x;
+	    cy = ball.mesh.position.y;
+          
+        
+        rxMax = rec.position.x + 25;
+        ryMax = rec.position.y + 10;
+        rxMin = rec.position.x - 25;
+        ryMin = rec.position.y - 10;
+   
+
+		for (let i = 0; i < boxs.length; i++) 
+        {
+        if(boxs[i].collidingCircle(ball)>=1) {
+			ball.mesh.material.color = new THREE.Color(0xffffff); $('#texts').text("Colision!");
+			document.getElementById("texts").setAttribute("style", "color:black;margin-left: 10px;");}
+        else {
+			ball.mesh.material.color = new THREE.Color(0x00ff00); $('#texts').text ("No colision!");
+			document.getElementById("texts").setAttribute("style", "color:black;margin-left: 10px;");}
+        }
+    
+      checkCollision();
+      requestAnimationFrame(animate);
+      render();
+    }
+    
+    
+    function render() {
+      renderer.render(scene, camera);
+    }
+    
+    </script>
+    </body>
+
+    </html>
