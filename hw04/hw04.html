@@ -13,7 +13,7 @@
       <div id="container" style="float:left; margin:3px; width:55vw; height:40vw">
 </div>
         <audio id="collisionsound" style="display:none">
-                    <source src="collisionsound.mp3" type='audio/wav'>
+                    <source src="../collisionsound.mp3" type='audio/wav'>
                     </audio>
           <div style="float:left; margin-left: 10px; width:32vw;">Radius:
   <input type=range min=5 max=20 step=0.5 value="10" id='rad'>
@@ -49,6 +49,17 @@ $('#rad').change ( function() {
       motion = !motion;
   	  console.log (motion)
     });
+	$('#play').click(function() {
+    isPaused = !isPaused;
+    if (isPaused) {
+        $('#play').text('Play')
+          collisionSound.Pause()
+		 
+    } else {
+        $('#play').text('Pause')
+        collisionSound.play()
+    }
+});
     
 	class Circ {
       constructor (mesh, rad, color) {
@@ -133,7 +144,7 @@ $('#rad').change ( function() {
       camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
       camera.position.z = 230;
      
-	  let controls = new THREE.OrbitControls(camera, renderer.domElement);
+	 // let controls = new THREE.OrbitControls(camera, renderer.domElement);
     
       ///////////////////////////////////////////////////////////
 	   var plane = new THREE.Mesh (new THREE.PlaneGeometry (200,200), new THREE.MeshBasicMaterial({color:0x888888}))
@@ -150,7 +161,7 @@ $('#rad').change ( function() {
       
 	  raycaster = new THREE.Raycaster();
       window.addEventListener('mousedown', onDocumentMouseDown, false);
-      rec = new THREE.Mesh(new THREE.PlaneGeometry(50,20),new THREE.MeshBasicMaterial({color:0xffffff}))
+      rec = new THREE.Mesh(new THREE.PlaneGeometry(20,20),new THREE.MeshBasicMaterial({color:0xffffff}))
 	  scene.add(rec);
 		
 	  let geometry = new THREE.Geometry();
@@ -183,11 +194,20 @@ $('#rad').change ( function() {
       }
     }
     function checkCollision () {
-		$.get( "http://127.0.0.1:1337/api?radius="+ r + "&rxMax=" + rxMax +"&ryMax=" + ryMax +"&rxMin=" + rxMin + "&ryMin=" + ryMin + "&cx=" + cx + "&cy=" + cy, function( data ) {
-		if(data && data.output){		
-                result = parseInt(data.output, 10);			
-     
-            }
+		$.get( "http://127.0.0.1:1337/api?radius="+ r + "&rxMax=" + rxMax +"&ryMax=" + ryMax +"&rxMin=" + rxMin + "&ryMin=" + ryMin + "&cx=" + cx + "&cy=" + cy, 
+			  function( data ) {
+					if(data && data.output){
+						result = parseInt(data.output, 30);
+						console.log(result);
+					if(result==1){
+						ball. material.color = new THREE.Color(0xFFFF00); 
+						$('#texts').text ("Collision!");document.getElementById("texts").setAttribute("style", "color:red;margin-left: 10px;");
+					}
+					else{
+						 ball. material.color = new THREE.Color(0xffffff); 
+						 $('#texts').text ("No Collision!");document.getElementById("texts").setAttribute("style", "color:black;margin-left: 10px;");
+					}
+					}
 
 
 	});
@@ -206,22 +226,12 @@ $('#rad').change ( function() {
 	    cy = ball.mesh.position.y;
           
         
-        rxMax = rec.position.x + 25;
+        rxMax = rec.position.x + 10;
         ryMax = rec.position.y + 10;
-        rxMin = rec.position.x - 25;
+        rxMin = rec.position.x - 10;
         ryMin = rec.position.y - 10;
    
 
-		for (let i = 0; i < boxs.length; i++) 
-        {
-        if(boxs[i].collidingCircle(ball)>=1) {
-			ball.mesh.material.color = new THREE.Color(0xffffff); $('#texts').text("Colision!");
-			document.getElementById("texts").setAttribute("style", "color:black;margin-left: 10px;");}
-        else {
-			ball.mesh.material.color = new THREE.Color(0x00ff00); $('#texts').text ("No colision!");
-			document.getElementById("texts").setAttribute("style", "color:black;margin-left: 10px;");}
-        }
-    
       checkCollision();
       requestAnimationFrame(animate);
       render();
