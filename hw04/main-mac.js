@@ -18,11 +18,8 @@ app.get ('./a.out', function (req, res) {
 	var rxMin = req.query.rxMin;
 	var ryMin = req.query.ryMin;
 	
-	console.log("r ",r);
-	console.log("circle x",cx," circle y",cy);
-	console.log("x max",rxMax," y max",ryMax);
-	console.log("min x",rxMin," min y",ryMin);
-	shelljs.exec('checkcolision.exe '  + cx + ' ' + cy + ' ' + r + ' ' + rxMax + ' ' + ryMax + ' ' + rxMin + ' ' + ryMin, function(status, output) {
+	
+	shelljs.exec('checkCollision.exe '  + cx + ' ' + cy +  ' ' + rxMax + ' ' + ryMax + ' ' + rxMin + ' ' + ryMin + ' ' + r, function(status, output) {
 	     //console.log('Exit status:', status);
 		 // console.log('Output:', output);
 		 
