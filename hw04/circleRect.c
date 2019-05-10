@@ -1,23 +1,13 @@
-/* 
-Fast Circle-Rectangle Intersection Checking
-by Clifford A. Shaffer
-from "Graphics Gems", Academic Press, 1990
-*/
-
 #include "GraphicsGems.h"
+#include <stdio.h>
+#include <stdlib.h>
 
-boolean Check_Intersect(R, C, Rad)
-
-/* Return TRUE iff rectangle R intersects circle with centerpoint C and
-   radius Rad. */
- Box2 *R;
- Point2 *C;
- double Rad;
+boolean Check_Intersect( Box2 *R,  Point2 *C,  double Rad)
 {
  double Rad2;
 
  Rad2 = Rad * Rad;
- /* Translate coordinates, placing C at the origin. */
+
  R->max.x -= C->x;  R->max.y -= C->y;
  R->min.x -= C->x;  R->min.y -= C->y;
 
@@ -43,25 +33,24 @@ boolean Check_Intersect(R, C, Rad)
    	else 				/* R contains circle centerpoint */
      		return(TRUE);
 } 	
-
-int main(int argc, char *argv[]){
-	
+int main(int argc,char * argv[]){
 	Point2 C;
 	Box2 R;
-	double Rad = atof(argv[1]);
-    R.max.x = atof(argv[2]);
-	R.max.y = atof(argv[3]);
-    R.min.x = atof(argv[4]); 
-	R.min.y = atof(argv[5]);
-	C.x = atof(argv[6]); 
-	C.y = atof(argv[7]);
+	C.x=atof(argv[1]);
+	C.y=atof(argv[2]);
+	R.max.x=atof(argv[3]);
+	R.max.y=atof(argv[4]);
+	R.min.x=atof(argv[5]);
+	R.min.y=atof(argv[6]);
+	double Rad=atof(argv[7]);
 	
-    if ( argc == 1 ) {
+	if ( argc != 8 ) {
 		printf ("0");
-        exit(1);
+		exit(1);
     }else {
-		boolean judge = Check_Intersect(&R, &C, Rad);
-		printf("%d\n", judge);
+		boolean judge=Check_Intersect(&R,&C,Rad);
+		printf ("%d\n",judge);
+          //printf("22222");		
+	}
+		exit(0);
     }
-	exit(0);
-}
