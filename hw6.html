@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
+		<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+		<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+		<title>Homework 6</title>
+	</head>
+
+	<body> 
+	
+		<div id='deviceInfo'></div>
+		
+		
+		<style>
+			#info {
+				position: absolute;
+				top: 100px;
+				width: 100%;
+				color: #ffff00;
+				text-align: center;
+			}
+			
+			#deviceInfo {
+				position: absolute;
+				bottom: 100px; width: 100%;
+				color: #ffffff;
+				text-align: center;
+			}
+			
+			
+		</style>
+		
+		<script>
+			class Ball {
+				constructor(posiX,posiZ) {
+					this.pos = new THREE.Vector3(posiX, 0, posiZ);
+					this.vel = new THREE.Vector3();
+					this.force = new THREE.Vector3();
+					this.mesh = new THREE.Mesh(new THREE.SphereGeometry(5, 32, 32), new THREE.MeshPhongMaterial({
+						color: 0xff1234,
+        				specular: 0x444444,
+       					shininess: 80
+					}));
+					scene.add(this.mesh);
+				}
+				
+				update(dt) {
+					this.vel.add(this.force.clone().multiplyScalar(dt));
+					this.pos.add(this.vel.clone().multiplyScalar(dt));
+					this.mesh.position.copy(this.pos);
+					
+					
+					
+					// border check
+					//外框牆面碰撞
+					if (this.pos.x > 90) {
+						this.pos.setX (90);
+						this.vel.setX (0);
+					} else if (this.pos.x < -90) {
+						this.pos.setX (-90);
+						this.vel.setX (0);
+					}
+					
+					if (this.pos.z > 90) {
+						this.pos.setZ (90);
+						this.vel.setZ (0);
+					} else if (this.pos.z < -90) {
+						this.pos.setZ (-90);
+						this.vel.setZ (0);
+					}
+					
+					//中直
+					if (this.pos.x <= 7.5 && this.pos.x >= -7.5) {
+						if(this.pos.x > 0 && this.pos.z >= -5){
+							this.pos.setX(7.5);
+							this.vel.setX(0);
+						}
+						
+						if(this.pos.x < 0 && this.pos.z >= -5) {
+							this.pos.setX(-7.5);
+							this.vel.setX(0);
+						}
+					}
+					
+					//中橫
+					if (this.pos.x <= 7.5 && this.pos.x >= -57.5) {
+						if(this.pos.z <= 7.5 && this.pos.z >= -7.5) {
+							if (this.pos.z < 0) {
+								this.pos.setZ(-7.5);
+								this.vel.setZ(0);
+							}
+							
+							if (this.pos.z > 0) {
+								this.pos.setZ(7.5);
+								this.vel.setZ(0);
+							}
+						}
+					}
+					
+					//右上
+					if (this.pos.x <= 90 && this.pos.x >= 12.5) {
+						if(this.pos.z <= -52.5 && this.pos.z >= -67.5) {
+							if (this.pos.z > -60) {
+								this.pos.setZ(-52.5);
+								this.vel.setZ(0);
+							}
+							
+							if (this.pos.z < -60) {
+								this.pos.setZ(-67.5);
+								this.vel.setZ(0);
+							}
+						}
+					}
+					
+					//左上
+					if (this.pos.x <= -42.5 && this.pos.x >= -90) {
+						if(this.pos.z <= -42.5 && this.pos.z >= -57.5) {
+							if (this.pos.z > -50) {
+								this.pos.setZ(-42.5);
+								this.vel.setZ(0);
+							}
+							
+							if (this.pos.z < -50) {
+								this.pos.setZ(-57.5);
+								this.vel.setZ(0);
+							}
+						}
+					}
+					
+					//右下
+					if (this.pos.x <= 90 && this.pos.x >= 32.5) {
+						if(this.pos.z <= 47.5 && this.pos.z >= 32.5) {
+							if (this.pos.z > 40) {
+								this.pos.setZ(47.5);
+								this.vel.setZ(0);
+							}
+							
+							if (this.pos.z < 40) {
+								this.pos.setZ(32.5);
+								this.vel.setZ(0);
+							}
+						}
+					}
+					
+					
+				}
+				
+				
+				
+			}
+			
+			class Plane {
+				constructor() {
+					// properties
+					this.pos = new THREE.Vector3(0, 10, 0); // object frame
+					this.normal = new THREE.Vector3(0, 1, 0); // object frame
+					this.mesh = new THREE.Mesh(new THREE.BoxGeometry(500, 20, 500), new THREE.MeshLambertMaterial({
+						transparent: true,
+						opacity: 0.5
+					}));
+					scene.add(this.mesh);
+					// methods
+					this.isPointOut = function (point) {
+						// considering plane transformation
+						var posW = this.pos.clone(); // in world frame
+						var normalW = this.normal.clone();
+						posW.applyMatrix4(this.mesh.matrixWorld);
+						var tt = new THREE.Matrix4();
+						normalW.applyMatrix4(tt.getInverse(this.mesh.matrixWorld).transpose());
+						return true; // for infinite plane
+						// for contact problem, this should check whether the ball
+						// rolls out of boundary
+					}
+				}
+			}
+			
+
+			
+			
+			function Pit(){
+				var meshpit = new THREE.MeshPhongMaterial({
+						color: 0xbdbdbd,
+						specular: 0x444444,
+						shininess: 80
+					})
+				var pit1 = new THREE.Mesh(new THREE.SphereGeometry (6,32,32,0,6.3,4.7,3), meshpit);
+				pit1.position.x = 88;
+				pit1.position.z = 88;
+				pit1.rotation.x = Math.PI;
+				scene.add(pit1);
+				
+				var pit2 = new THREE.Mesh(new THREE.SphereGeometry (6,32,32,0,6.3,4.7,3), meshpit);
+				pit2.position.x = 88;
+				pit2.position.z = -88;
+				pit2.rotation.x = Math.PI;
+				scene.add(pit2);
+				
+				var pit3 = new THREE.Mesh(new THREE.SphereGeometry (6,32,32,0,6.3,4.7,3), meshpit);
+				pit3.position.x = -88;
+				pit3.position.z = -88;
+				pit3.rotation.x = Math.PI;
+				scene.add(pit3);				
+			}
+			
+			//牆面物件
+			
+			
+			function Wall(){
+				var mesh = new THREE.MeshPhongMaterial({
+						color: 0x444444
+					})
+				var wall1 = new THREE.Mesh(new THREE.BoxGeometry(200,10,6),mesh);
+				scene.add(wall1);
+				wall1.position.set(0,5,97);
+				var wall2 = new THREE.Mesh(new THREE.BoxGeometry(200,10,6),mesh);
+				scene.add(wall2);
+				wall2.position.set(0,5,-97);
+				var wall3 = new THREE.Mesh(new THREE.BoxGeometry(6,10,200),mesh);
+				scene.add(wall3);
+				wall3.position.set(97,5,0);
+				var wall4 = new THREE.Mesh(new THREE.BoxGeometry(6,10,200),mesh);
+				scene.add(wall4);
+				wall4.position.set(-97,5,0);
+				////////////////////////////////////
+				var partition1 = new THREE.Mesh(new THREE.BoxGeometry(5,10,100),mesh);
+				scene.add(partition1);
+				partition1.position.set(0,5,50);
+				var partition2 = new THREE.Mesh(new THREE.BoxGeometry(50,10,5),mesh);
+				scene.add(partition2);
+				partition2.position.set(-22.5,5,0);
+				var partition3 = new THREE.Mesh(new THREE.BoxGeometry(50,10,5),mesh);
+				scene.add(partition3);
+				partition3.position.set(-75,5,-50);
+				var partition4 = new THREE.Mesh(new THREE.BoxGeometry(80,10,5),mesh);
+				scene.add(partition4);
+				partition4.position.set(60,5,-60);
+				var partition5 = new THREE.Mesh(new THREE.BoxGeometry(60,10,5),mesh);
+				scene.add(partition5);
+				partition5.position.set(70,5,40);
+				
+			}
+			
+			var camera, scene, renderer, light;
+			var plane;
+			var pit;
+			var ball;
+			var clock = new THREE.Clock();
+			var mouse = new THREE.Vector2();
+			var gravity = new THREE.Vector3();
+			var deviceInfo, gamma = 0, beta = 0;
+			
+			
+			init();
+			animate();
+			
+			function init() {
+				scene = new THREE.Scene();
+				camera = new THREE.OrthographicCamera(-110, 110, 110, -110, 10, 2000);
+				camera.position.set(0, 450, 0);
+				camera.up.set(0, 0, -1);
+				camera.lookAt(new THREE.Vector3(0, 0, 0));
+				scene.add(camera);
+				
+				var gridXZ = new THREE.GridHelper(200, 10, 'red', 'white');
+				//scene.add(gridXZ);
+				//scene.add (new THREE.AxisHelper (30));
+				
+				renderer = new THREE.WebGLRenderer();
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				renderer.setClearColor(0x888888);
+				
+				//////////////////////////////////////////////////////////////////////////////
+				document.body.appendChild(renderer.domElement);
+				window.addEventListener('resize', onWindowResize, false);
+				//document.addEventListener('mousemove', onDocumentMouseMove, false);
+				deviceInfo = document.getElementById('deviceInfo');
+				window.addEventListener('deviceorientation', function(e) {
+					gamma = e.gamma;
+					beta = e.beta;
+					console.log (gamma +', ' + beta + ', ' + e.alpha);
+				});
+				
+				
+				//地面
+				var loader = new THREE.TextureLoader();
+  				loader.crossOrigin = '';
+				var texture = loader.load('https://us.123rf.com/450wm/ivo13/ivo131806/ivo13180600097/103450285-brown-wood-texture-abstract-background-light-brown-scratched-wooden-cutting-board-.jpg?ver=6');
+				let floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshPhongMaterial({
+					side: THREE.DoubleSide,
+					map: texture
+				}));
+				scene.add(floor);
+				floor.rotation.x = -Math.PI / 2;
+				floor.position.y = -10;
+				//////////////////////////////////////////////////////////////////////////////
+				//燈光
+				light = new THREE.PointLight(0xffffff);
+				light.position.set(0, 300, 0);
+				scene.add(light);
+				
+				//////////////////////////////////////////////////////////////////////////////
+				//球
+				ball = new Ball(-89,88);
+				Pit();
+				Wall();
+			}
+			
+			function onWindowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize(window.innerWidth, window.innerHeight);
+			}
+			function Contact(ball, plane) {
+				
+					ball.pos.setY(5); // ball position correction
+					let normalW = new THREE.Vector3(0, 1, 0); // local plane normal
+					
+					ball.force.copy (gravity.projectOnPlane (normalW));
+				
+			}
+			function animate() {
+				var a = new THREE.Euler(-beta*Math.PI/180, 0, gamma*Math.PI/180, 'XYZ');
+				gravity = new THREE.Vector3(0, -180, 0);
+				gravity.applyEuler(a);
+				 
+				Contact(ball, plane);
+				let dt = clock.getDelta();
+				
+				
+				
+				
+					if(ball.pos.x >= 85 && ball.pos.x <= 95 && ball.pos.z >= 85 && ball.pos.z <=95) {
+						    ball.mesh.position.x = 88;
+							ball.mesh.position.y = 0;
+							ball.mesh.position.z = 88;	
+					}
+					else if(ball.pos.x >= 85 && ball.pos.x <= 95 && ball.pos.z >= -95 && ball.pos.z <=-85) {
+						    ball.mesh.position.x = 88;
+							ball.mesh.position.y = 0;
+							ball.mesh.position.z = -88;	
+					}
+					else if(ball.pos.x >= -95 && ball.pos.x <= -85 && ball.pos.z >= -95 && ball.pos.z <=-85) {
+						    ball.mesh.position.x = -88;
+							ball.mesh.position.y = 0;
+							ball.mesh.position.z = -88;	
+					}
+					else{
+						ball.update(dt);
+					}
+					
+					
+				
+				requestAnimationFrame(animate);
+				renderer.render(scene, camera);
+			}
+		</script>
+	</body>
+</html>
